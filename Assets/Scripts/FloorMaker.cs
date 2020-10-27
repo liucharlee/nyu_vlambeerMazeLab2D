@@ -12,54 +12,93 @@ public class FloorMaker : MonoBehaviour {
 
 //	DECLARE CLASS MEMBER VARIABLES:
 //	Declare a private integer called myCounter that starts at 0; 		// count how many floor tiles this FloorMaker has instantiated
+int FloorCounter = 0;
+
 //	Declare a public Transform called floorPrefab, assign the prefab in inspector;
+public Transform floorPrefab;
+
 //	Declare a public Transform called floorMakerPrefab, assign the prefab in inspector; 
+public Transform floorMakerPrefab;
+
+public static int globalTileCount;
 
 	void Update () {
 //		If counter is less than 50, then:
+		if ( FloorCounter < 150 ) {
 //			Generate a random number from 0.0f to 1.0f;
+			float randomNumber = Random.Range(0.0f, 1.0f);
 //			If random number is less than 0.25f, then rotate myself 90 degrees on Z axis;
 //				... Else if number is 0.25f-0.5f, then rotate myself -90 degrees on Z axis;
 //				... Else if number is 0.99f-1.0f, then instantiate a floorMakerPrefab clone at my current position;
 //			// end elseIf
+			if ( randomNumber < 0.20f ) { 
+                transform.Rotate(0, 0, 90);
+            } else if (0.20f < randomNumber && randomNumber < 0.50f) {
+				transform.Rotate(0, 0, -90);
+			} else if (0.999f < randomNumber && randomNumber < 1.0f) {
+				//Instantiate( floorMakerPrefab, transform.position, Quaternion.Euler(0, 0, 0) );
+			}
 
 //			Instantiate a floorPrefab clone at current position;
+			Instantiate( floorPrefab, transform.position, Quaternion.Euler(0, 0, 0) );
+			globalTileCount++;
 //			Move 1 unit "upwards" based on this object's local rotation (e.g. with rotation 0,0,0 "upwards" is (0,1,0)... but with rotation 0,0,180 then "upwards" is (0,-1, 0)... )
+			transform.position += transform.up;
+			//transform.Translate(0f, 1f, 0f);
+			//transform.position += transform.forward * Time.deltaTime * 1f;
+
 //			Increment counter;
+			FloorCounter++;
+
 //		Else:
 //			Destroy my game object; 		// self destruct if I've made enough tiles already
-	}
+		} else {
+			Destroy(gameObject);
+		}
 
+		//	STABILIZE: 
+		//	- code it so that all the FloorMakers can only spawn a grand total of 500 tiles in the entire world; how would you do that?
+		//  hints:
+		//  - declare a "public static int" counter variable called "globalTileCount"
+		//  - each time you instantiate a floor tile, increment globalTileCount
+		//  - if there are already too many tiles, then self-destruct without spawning new floor tiles... like "if(globalTileCount > 500)" ... "Destroy(gameObject);"
+		//  note: a static var will persist beyond scene changes! you have to reset the variable manually when you restart the scene!
+		//if (globalTileCount > 500){
+		//	Destroy(gameObject);
+		//}
+
+	}
 } // don't delete, end of FloorMaker class
 
 
 // STEP 2: =====================================================================================
 // implement, test, and stabilize the system
 
-//  ADD A RESTART BUTTON TO MAKE IT EASIER TO TEST:
-//  - let us press [R] to reload the scene and see a new level generation
-//  - example: https://github.com/radiatoryang/fall2020_gamedev/blob/master/week05_raycasting/Assets/Scripts/RestartScene.cs
+	//	IMPLEMENT AND TEST:
+	//	- save your scene!!! the code could potentially be infinite / exponential, and crash Unity
+	//	- don't forget to configure all prefabs in the inspector
+	//  - test and debug!
 
-//	IMPLEMENT AND TEST:
-//	- save your scene!!! the code could potentially be infinite / exponential, and crash Unity
-//	- don't forget to configure all prefabs in the inspector
-//  - test and debug!
+	//  ADD A RESTART BUTTON TO MAKE IT EASIER TO TEST:
+	//  - let us press [R] to reload the scene and see a new level generation
+	//  - example: https://github.com/radiatoryang/fall2020_gamedev/blob/master/week05_raycasting/Assets/Scripts/RestartScene.cs
 
-//	STABILIZE: 
-//	- code it so that all the FloorMakers can only spawn a grand total of 500 tiles in the entire world; how would you do that?
-//  hints:
-//  - declare a "public static int" counter variable called "globalTileCount"
-//  - each time you instantiate a floor tile, increment globalTileCount
-//  - if there are already too many tiles, then self-destruct without spawning new floor tiles... like "if(globalTileCount > 500)" ... "Destroy(gameObject);"
-//  note: a static var will persist beyond scene changes! you have to reset the variable manually when you restart the scene!
+
+	//	STABILIZE: 
+	//	- code it so that all the FloorMakers can only spawn a grand total of 500 tiles in the entire world; how would you do that?
+	//  hints:
+	//  - declare a "public static int" counter variable called "globalTileCount"
+	//  - each time you instantiate a floor tile, increment globalTileCount
+	//  - if there are already too many tiles, then self-destruct without spawning new floor tiles... like "if(globalTileCount > 500)" ... "Destroy(gameObject);"
+	//  note: a static var will persist beyond scene changes! you have to reset the variable manually when you restart the scene!
 
 
 // STEP 3: ======================================================================================
 // tune your values...
 
-// a. how many floor tiles should a FloorMaker instantiate before self-destructing? you decide
-// b. how would you tune the probabilities to generate lots of long hallways?
-// c. tweak probabilities... what if you increase the % chance to make another FloorMaker? what if you decrease it?
+	// a. how many floor tiles should a FloorMaker instantiate before self-destructing? you decide
+	// b. how would you tune the probabilities to generate lots of long hallways?
+	// c. tweak probabilities... what if you increase the % chance to make another FloorMaker? what if you decrease it?
 
 
 // STEP 4:  =====================================================================================
